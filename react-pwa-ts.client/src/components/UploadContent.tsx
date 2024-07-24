@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import DownloadLink from './DownloadLink';
+import apiClient from '../utilities/apiService';
 
 interface IUploadedFiles {
     name: string;
@@ -17,10 +18,9 @@ const UploadContent = () => {
     }, []);
 
     async function populateUploadedFiles() {
-        const response = await fetch('api/content/GetFilesFromContentFolder');
-        const data = await response.json();
+        const response = await apiClient.get('/content/GetFilesFromContentFolder');
         cacheContent();
-        setUploadedFiles(data);
+        setUploadedFiles(response.data);
     }
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -59,10 +59,8 @@ const UploadContent = () => {
             const formData = new FormData();
             formData.append('file', file);
 
-            await fetch('api/content/upload', {
-                method: 'POST',
-                body: formData
-            }).then(function() {
+            await apiClient.postForm('/content/upload', formData)
+                .then(function() {
                 
                 setFile(undefined);
                 setIsSuccessful(true);

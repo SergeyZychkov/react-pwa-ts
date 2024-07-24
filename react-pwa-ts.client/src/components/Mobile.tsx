@@ -1,4 +1,5 @@
 import { useState } from "react";
+import apiClient from '../utilities/apiService';
 
 const Mobile = () => {
     const [userLocation, setUserLocation] = useState('');
@@ -59,7 +60,6 @@ const Mobile = () => {
     }
 
 function configurePushSub() {
-    console.log('configurePushSub');
     if (!('serviceWorker' in navigator)) {
         return;
     }
@@ -68,12 +68,10 @@ function configurePushSub() {
 
     navigator.serviceWorker.ready
         .then(function(swreg) {
-            console.log("swreg");
             reg = swreg;
             return swreg.pushManager.getSubscription();
         })
         .then(function(sub) {
-            console.log(sub);
             if (!sub) {
                 var vapidPublicKey = 'BK301jmlPtPxS_ivFz4Bdi8dpCyLF0KpN1Ij_5nh5ktTb8Le8amZRuzH0JMP8ZXniBth6kse2BMQYXV8rBlFTe0';
                 var convertedVapidPublicKey = urlBase64ToUint8Array(vapidPublicKey);
@@ -86,19 +84,11 @@ function configurePushSub() {
             }
         })
         .then(function(newSub) {
-            console.log(newSub);
-            return fetch('api/PushNotification/Subscribe',
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify(newSub)
-                });
+            return apiClient.post('/PushNotification/Subscribe',
+                newSub);
         })
         .then(function(res) {
-            if (res.ok) {
+            if (res) {
                 displayConfirmNotification();
             }
         })
@@ -127,13 +117,13 @@ function notificationInputChange(event: React.ChangeEvent<HTMLInputElement>) {
 }
 
 async function sendNotification() {
-    await fetch('api/PushNotification/SendNotification', {
-            method: 'POST',
-            body: JSON.stringify({ content: notification, openUrl:"/", title: 'Test Push'}),
-            headers:{'content-type': 'application/json'}
-        })
-        .then(function(res) {
-            console.log(res);
+    await apiClient.post('/PushNotification/SendNotification',
+            {
+                 content: notification, 
+                 openUrl:"/", 
+                 title: 'Test Push'
+            })
+        .then(function() {
             setNotification('');
         });
 }

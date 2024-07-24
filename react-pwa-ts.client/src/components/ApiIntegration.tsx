@@ -1,4 +1,5 @@
 import { useEffect, useState, Suspense, lazy } from 'react';
+import apiClient from '../utilities/apiService';
 
 const ApiInteraction = lazy(() => delayForDemo(import('./ApiInteraction')));
 
@@ -23,8 +24,7 @@ export default function ApiIntegration() {
     }, []);
     
     async function populateWeatherData() {
-        const response = await fetch('api/weatherforecast');
-        const data = await response.json();
+        const { data } =  await apiClient.get('/weatherforecast');
         setForecasts(data);
     }
 

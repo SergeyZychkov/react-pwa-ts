@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import './App.css';
+import apiClient from '../utilities/apiService';
 
 export default function ApiInteraction() {
     const [testValue, setTestValue] = useState<string>('');
     const [newValue, setNewValue] = useState<string>('');
 
-    const getTestValueEndpoint = 'api/Test/GetTestValue';
+    const getTestValueEndpoint = '/Test/GetTestValue';
     
     useEffect(() => {
         populateTestValue();
@@ -14,8 +15,7 @@ export default function ApiInteraction() {
     var networkDataReceived = false;
 
     async function populateTestValue() {
-        const response = await fetch(getTestValueEndpoint);
-        const data = await response.text();
+        const {data} = await apiClient.get(getTestValueEndpoint);
         networkDataReceived = true;
         setTestValue(data);
     }
@@ -23,12 +23,10 @@ export default function ApiInteraction() {
     function saveTestValueButton() {
 
         networkDataReceived = false;
-
-        fetch('api/Test/SaveTestValue', {
-            method: 'POST',
-            body: JSON.stringify({ value: newValue }),
-            headers:{'content-type': 'application/json'}
-        })
+        
+        apiClient.post('/Test/SaveTestValue',
+            { value: newValue }
+            )
         .then(function() {
             if ('caches' in window) {
                 caches.match(getTestValueEndpoint)
