@@ -4,17 +4,26 @@ import TabButton from './TabButton';
 import ApiIntegration from './ApiIntegration';
 import UploadContent from './UploadContent';
 import Mobile from './Mobile';
+import GlobalStore from './GlobalStore';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 const queryClient = new QueryClient();
+
 export default function App() {
     const [selectedTopic, setSelectedTopic] = useState<string>();
+    const [showStore, setShowStore] = useState<boolean>(false);
 
     function handleSelect(selectedButton: string) {
         setSelectedTopic(selectedButton);
     }
 
     let tabContent: JSX.Element | string = "";
+    let globalStore: JSX.Element | string = "";
+
+    if (showStore) {
+
+        globalStore = <GlobalStore></GlobalStore>;
+    }
     
     if (selectedTopic) {
 
@@ -54,6 +63,10 @@ export default function App() {
                     </menu>
                     {tabContent}
                 </section>
+
+                <button onClick={() => setShowStore(!showStore)}>{showStore ? "Hide" : "Show"} global store</button>
+
+                {globalStore}
                 
                 <p>Also you can test following features:
                     <br/>- installable PWA
