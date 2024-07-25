@@ -1,54 +1,44 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import './App.css';
-import apiClient from '../utilities/apiService';
+import * as ApiService from '../utilities/api/apiService';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
 export default function ApiInteraction() {
-    const [testValue, setTestValue] = useState<string>('');
     const [newValue, setNewValue] = useState<string>('');
 
-    const getTestValueEndpoint = '/Test/GetTestValue';
+    // Access the client
+    const queryClient = useQueryClient();
     
-    useEffect(() => {
-        populateTestValue();
-    }, []);
-    
-    var networkDataReceived = false;
-
-    async function populateTestValue() {
-        const {data} = await apiClient.get(getTestValueEndpoint);
-        networkDataReceived = true;
-        setTestValue(data);
-    }
-    
-    function saveTestValueButton() {
-
-        networkDataReceived = false;
-        
-        apiClient.post('/Test/SaveTestValue',
-            { value: newValue }
+    const testValueQuery  = useQuery({
+        queryKey: ['testValue'],
+        queryFn: async () =>
+            await ApiService.getTestValue().then((res) => { return res.data; }
             )
-        .then(function() {
-            if ('caches' in window) {
-                caches.match(getTestValueEndpoint)
-                    .then(function(response) {
-                        if (response) {
-                            return response.text();
-                        }
-                    })
-                    .then(function(data) {
-                        if (!networkDataReceived && data) {
-                            setTestValue(data);
-                        }
-                    });
-            }
+    });
 
-            populateTestValue();
-
-        });
+    const testValueMutation = useMutation({
+        mutationFn: ApiService.saveTestValue,
+        onSuccess: () => {
+            const queryOptions: Object = { queryKey: ['testValue'] };
+            // Invalidate and refetch
+            queryClient.invalidateQueries(queryOptions);
+        }
+    });
+        
+    function saveTestValueButton() {
+        testValueMutation.mutate(newValue);
     }
 
     function handleTestValueInputChange(event: React.ChangeEvent<HTMLInputElement>) {
         setNewValue(event.target.value);
+    }
+
+    if (testValueQuery.isPending) {
+        return <span>Loading...</span>;
+    }
+
+    if (testValueQuery.isError) {
+        return <span>Error: {testValueQuery.error.message}</span>;
     }
 
     return (
@@ -60,7 +50,7 @@ export default function ApiInteraction() {
             </button>
 
              <p>4. GET call to fetch stored data from server: </p>
-            <input id="storedTestValueInput" value={testValue} disabled />
+            <input id="storedTestValueInput" value={testValueQuery.data} disabled />
         </div>
     );
 };

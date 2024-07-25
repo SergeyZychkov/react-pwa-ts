@@ -115,8 +115,6 @@ self.addEventListener('notificationclick', function(event) {
 });
 
 self.addEventListener('push', event => {
-    console.log(event);
-
     var data = {title: 'New!', content: 'Something new happened!', openUrl: '/'};
 
     if (event.data) {

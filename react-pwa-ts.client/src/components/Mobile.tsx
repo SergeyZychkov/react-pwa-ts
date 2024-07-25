@@ -1,5 +1,5 @@
 import { useState } from "react";
-import apiClient from '../utilities/apiService';
+import * as ApiService from '../utilities/api/apiService';
 
 const Mobile = () => {
     const [userLocation, setUserLocation] = useState('');
@@ -84,8 +84,9 @@ function configurePushSub() {
             }
         })
         .then(function(newSub) {
-            return apiClient.post('/PushNotification/Subscribe',
-                newSub);
+            if (newSub) {
+                return ApiService.subscribeToNotifications(newSub);
+            }
         })
         .then(function(res) {
             if (res) {
@@ -117,12 +118,7 @@ function notificationInputChange(event: React.ChangeEvent<HTMLInputElement>) {
 }
 
 async function sendNotification() {
-    await apiClient.post('/PushNotification/SendNotification',
-            {
-                 content: notification, 
-                 openUrl:"/", 
-                 title: 'Test Push'
-            })
+    await ApiService.sendNotification(notification)
         .then(function() {
             setNotification('');
         });

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import DownloadLink from './DownloadLink';
-import apiClient from '../utilities/apiService';
+import * as ApiService from '../utilities/api/apiService';
 
 interface IUploadedFiles {
     name: string;
@@ -18,7 +18,7 @@ const UploadContent = () => {
     }, []);
 
     async function populateUploadedFiles() {
-        const response = await apiClient.get('/content/GetFilesFromContentFolder');
+        const response = await ApiService.getFilesFromContentFolder();
         cacheContent();
         setUploadedFiles(response.data);
     }
@@ -59,7 +59,7 @@ const UploadContent = () => {
             const formData = new FormData();
             formData.append('file', file);
 
-            await apiClient.postForm('/content/upload', formData)
+            await ApiService.uploadContent(file)
                 .then(function() {
                 
                 setFile(undefined);
