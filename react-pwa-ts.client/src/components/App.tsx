@@ -46,7 +46,7 @@ export default function App() {
                             isSelected={selectedTopic === 'API'}
                             onSelect={() => handleSelect('API')}
                         >
-                            API integration
+                            API integration/MUI/MUI-X 
                         </TabButton>
                         <TabButton
                             isSelected={selectedTopic === 'Content'}
