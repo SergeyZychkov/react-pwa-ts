@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import './App.css';
 import TabButton from './TabButton';
-import ApiIntegration from './ApiIntegration';
-import UploadContent from './UploadContent';
-import Mobile from './Mobile';
 import GlobalStore from './GlobalStore';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { Outlet } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
 const queryClient = new QueryClient();
 
@@ -13,26 +12,18 @@ export default function App() {
     const [selectedTopic, setSelectedTopic] = useState<string>();
     const [showStore, setShowStore] = useState<boolean>(false);
 
+    const navigate = useNavigate();
+
     function handleSelect(selectedButton: string) {
         setSelectedTopic(selectedButton);
+        navigate(selectedButton);
     }
 
-    let tabContent: JSX.Element | string = "";
     let globalStore: JSX.Element | string = "";
 
     if (showStore) {
 
         globalStore = <GlobalStore></GlobalStore>;
-    }
-    
-    if (selectedTopic) {
-
-        if(selectedTopic === 'API')
-            tabContent = <ApiIntegration></ApiIntegration>;
-        else if(selectedTopic === 'Content')
-            tabContent = <UploadContent></UploadContent>;
-        else if(selectedTopic === 'Mobile')
-            tabContent = <Mobile></Mobile>;
     }
 
     return (
@@ -44,24 +35,24 @@ export default function App() {
                     <menu>
                         <TabButton
                             isSelected={selectedTopic === 'API'}
-                            onSelect={() => handleSelect('API')}
+                            onSelect={() => handleSelect('integration')}
                         >
                             API integration/MUI/MUI-X 
                         </TabButton>
                         <TabButton
                             isSelected={selectedTopic === 'Content'}
-                            onSelect={() => handleSelect('Content')}
+                            onSelect={() => handleSelect('content')}
                         >
                             Upload content
                         </TabButton>
                         <TabButton
                             isSelected={selectedTopic === 'Mobile'}
-                            onSelect={() => handleSelect('Mobile')}
+                            onSelect={() => handleSelect('mobile')}
                         >
                             Geolocation and PUSH notifications
                         </TabButton>
                     </menu>
-                    {tabContent}
+                    <Outlet />
                 </section>
 
                 <button onClick={() => setShowStore(!showStore)}>{showStore ? "Hide" : "Show"} global store</button>
