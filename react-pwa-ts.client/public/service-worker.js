@@ -1,16 +1,14 @@
+var CACHE_NAME = "cache-version-2024-08-09T15:53:26";
 
-var CACHE_STATIC_NAME = 'static-v1';
-var CACHE_DYNAMIC_NAME = 'dynamic-v1';
+self.addEventListener('install', function(event) { 
+    self.skipWaiting();
 
-self.addEventListener('install', function(event) {
   event.waitUntil(
-      caches.open(CACHE_STATIC_NAME)
+      caches.open(CACHE_NAME)
       .then(function(cache) {
           cache.addAll([
             '/',
-            './index.html',
-            './src/components/App.css',
-            './src/index.css'
+            './index.html'
           ]);
       })
   );
@@ -21,7 +19,7 @@ self.addEventListener('activate', function(event) {
     caches.keys()
       .then(function(keyList) {
         return Promise.all(keyList.map(function(key) {
-          if (key !== CACHE_STATIC_NAME && key !== CACHE_DYNAMIC_NAME) {
+          if (key !== CACHE_NAME) {
             return caches.delete(key);
           }
         }));
@@ -49,7 +47,7 @@ var dynamicUrlArray = [
 self.addEventListener('fetch', function(event) {
     if (dynamicUrlArray.some(function(element) {return event.request.url.indexOf(element) > -1} )) {
         event.respondWith(
-            caches.open(CACHE_DYNAMIC_NAME)
+            caches.open(CACHE_NAME)
             .then(function(cache) {
                 return fetch(event.request)
                     .then(function(res) {
@@ -67,14 +65,14 @@ self.addEventListener('fetch', function(event) {
                 } else {
                     return fetch(event.request)
                         .then(function(res) {
-                            return caches.open(CACHE_DYNAMIC_NAME)
+                            return caches.open(CACHE_NAME)
                                 .then(function(cache) {
                                     cache.put(event.request.url, res.clone());
                                     return res;
                                 });
                         })
                         .catch(function(err) {
-                            return caches.open(CACHE_STATIC_NAME)
+                            return caches.open(CACHE_NAME)
                                 .then(function(cache) {
                                     if (event.request.headers.get('accept').includes('text/html')) {
                                         return cache.match('/offline.html');

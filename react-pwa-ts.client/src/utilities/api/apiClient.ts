@@ -3,7 +3,6 @@ import Axios, { AxiosRequestConfig, AxiosError } from 'axios';
 const token = "testToken";
 
 const config: Object = {
-    baseURL: '/api',
     timeout: 10000
 };
 

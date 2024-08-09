@@ -4,7 +4,7 @@ module.exports = {
             mode: 'tags-split',
             target: 'src/shared/api/toy-app/toy-app.ts',
             schemas: 'src/shared/api/toy-app/model',
-            client: 'react-query',
+            client: 'axios-functions',
             httpClient: 'axios',
             mock: false,
             override: {

@@ -2,7 +2,7 @@ import { useEffect, useState, Suspense, lazy } from 'react';
 import Box from '@mui/material/Box';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import {WeatherForecast} from '../shared/api/toy-app/model/weatherForecast';
-import {useGetWeatherForecast} from '../shared/api/toy-app/weather-forecast/weather-forecast';
+import {getWeatherForecast} from '../shared/api/toy-app/weather-forecast/weather-forecast';
 
 const ApiInteraction = lazy(() => delayForDemo(import('./ApiInteraction')));
 
@@ -44,7 +44,7 @@ export default function ApiIntegration() {
     }, []);
     
     async function populateWeatherData() {
-        const { data } = await useGetWeatherForecast();
+        const data = await getWeatherForecast();
         setForecasts(data);
     }
 
