@@ -1,5 +1,5 @@
-import axios from 'axios';
-
+import Axios, { AxiosRequestConfig, AxiosError } from 'axios';
+ 
 const token = "testToken";
 
 const config: Object = {
@@ -7,7 +7,7 @@ const config: Object = {
     timeout: 10000
 };
 
-const apiClient = axios.create(config);
+export const apiClient = Axios.create(config); 
 
 apiClient.interceptors.request.use(
     config => {
@@ -15,5 +15,27 @@ apiClient.interceptors.request.use(
         return config;
     }, 
     error => Promise.reject(error));
+
+export const customInstance = <T>(
+    config: AxiosRequestConfig,
+    options?: AxiosRequestConfig
+): Promise<T> => {
+    const source = Axios.CancelToken.source();
+    const promise = apiClient({
+        ...config,
+        ...options,
+        cancelToken: source.token,
+    }).then(({ data }) => data);
+ 
+    // @ts-ignore
+    promise.cancel = () => {
+        source.cancel('Query was cancelled');
+    };
+ 
+    return promise;
+};
+
+export type ErrorType<Error> = AxiosError<Error>;
+export type BodyType<BodyData> = BodyData;
 
 export default apiClient;

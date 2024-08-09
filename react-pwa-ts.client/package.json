@@ -4,10 +4,13 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "predev": "npm run generate-api",
     "dev": "vite",
+    "prebuild": "npm run generate-api",
     "build": "tsc -b && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "generate-api": "orval"
   },
   "dependencies": {
     "@emotion/react": "^11.13.0",
@@ -31,6 +34,7 @@
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-react-refresh": "^0.4.7",
+    "orval": "^7.0.1",
     "typescript": "^5.2.2",
     "vite": "^5.3.4"
   }

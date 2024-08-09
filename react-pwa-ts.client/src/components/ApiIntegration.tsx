@@ -1,16 +1,10 @@
 import { useEffect, useState, Suspense, lazy } from 'react';
 import Box from '@mui/material/Box';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import * as ApiService from '../utilities/api/apiService';
+import {WeatherForecast} from '../shared/api/toy-app/model/weatherForecast';
+import {useGetWeatherForecast} from '../shared/api/toy-app/weather-forecast/weather-forecast';
 
 const ApiInteraction = lazy(() => delayForDemo(import('./ApiInteraction')));
-
-interface Forecast {
-    date: string;
-    temperatureC: number;
-    temperatureF: number;
-    summary: string;
-}
 
 function delayForDemo(promise: any) {
     return new Promise(resolve => {
@@ -18,7 +12,7 @@ function delayForDemo(promise: any) {
     }).then(() => promise);
 }
 
-const columns: GridColDef<(Forecast)>[] = [
+const columns: GridColDef<(WeatherForecast)>[] = [
     { field: 'date', headerName: 'Date', width: 90 },
     {
         field: 'temperatureC',
@@ -38,19 +32,19 @@ const columns: GridColDef<(Forecast)>[] = [
     }
 ];
 
-function getRowId(row: Forecast) {
-    return row.date;
+function getRowId(row: WeatherForecast) {
+    return row.date?.toString() ?? '';
 }
 
 export default function ApiIntegration() {
-    const [forecasts, setForecasts] = useState<Forecast[]>();
+    const [forecasts, setForecasts] = useState<WeatherForecast[]>();
 
     useEffect(() => {
         populateWeatherData();
     }, []);
     
     async function populateWeatherData() {
-        const { data } = await ApiService.getWeatherForecast();
+        const { data } = await useGetWeatherForecast();
         setForecasts(data);
     }
 
