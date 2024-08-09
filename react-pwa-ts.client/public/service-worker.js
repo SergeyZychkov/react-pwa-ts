@@ -1,4 +1,4 @@
-var CACHE_NAME = "cache-version-2024-08-09T15:53:26";
+var CACHE_NAME = "cache-version-2024-08-09T17:32:09";
 
 self.addEventListener('install', function(event) { 
     self.skipWaiting();

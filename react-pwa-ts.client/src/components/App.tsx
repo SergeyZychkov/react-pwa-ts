@@ -51,6 +51,12 @@ export default function App() {
                         >
                             Geolocation and PUSH notifications
                         </TabButton>
+                        <TabButton
+                            isSelected={selectedTopic === 'Internationalization'}
+                            onSelect={() => handleSelect('internationalization')}
+                        >
+                            Internationalization
+                        </TabButton>
                     </menu>
                     <Outlet />
                 </section>

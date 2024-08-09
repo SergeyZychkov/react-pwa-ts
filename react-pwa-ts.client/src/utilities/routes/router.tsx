@@ -32,6 +32,10 @@ const router = createBrowserRouter([
             {
                 path: "mobile",
                 lazy: lazyWrap(() => import('../../components/Mobile'))
+            },
+            {
+                path: "internationalization",
+                lazy: lazyWrap(() => import('../../components/Internationalization'))
             }
         ]
     }
